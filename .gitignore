@@ -1,0 +1,9 @@
+node_modules/
+build/
+.gradle/
+dist/
+.DS_Store
+*.log
+.env
+.vite/
+.claude/

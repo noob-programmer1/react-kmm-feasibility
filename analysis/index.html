@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why KMM is NOT Worth It — Final Verdict</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
+      --border: rgba(255,255,255,0.08); --text: #d1d5db; --text2: #9ca3af;
+      --white: #fff; --blue: #3b82f6; --orange: #f59e0b; --green: #10b981;
+      --violet: #8b5cf6; --red: #ef4444; --yellow: #eab308;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+    html { scroll-behavior: smooth; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; width: 100%; z-index: 50; background: rgba(10,10,15,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    nav .inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 52px; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 13px; padding: 4px 10px; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: var(--blue); }
+    .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--white); font-size: 14px; }
+    .logo-icon { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--violet)); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 800; }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 48px 0; }
+    h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 900; color: var(--white); line-height: 1.1; }
+    h2 { font-size: 24px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+    h3 { font-size: 16px; font-weight: 700; color: var(--white); }
+    .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+    .gradient-text { background: linear-gradient(90deg, var(--blue), var(--violet), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Cards & Grid */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card { border-radius: 14px; padding: 20px; }
+    .stat { font-size: 36px; font-weight: 900; line-height: 1; }
+    .stat-sm { font-size: 24px; font-weight: 900; line-height: 1; }
+    .label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+    /* Metric row */
+    .metric-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .metric-row:last-child { border: none; }
+
+    /* Bar chart (pure CSS) */
+    .bar-group { margin-bottom: 14px; }
+    .bar-label { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .bar-track { height: 22px; background: var(--bg2); border-radius: 6px; overflow: hidden; position: relative; margin-bottom: 3px; }
+    .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; color: white; font-weight: 600; transition: width 0.8s ease; }
+    .bar-fill.orange { background: rgba(245,158,11,0.5); }
+    .bar-fill.blue { background: rgba(59,130,246,0.5); }
+    .bar-fill.violet { background: rgba(139,92,246,0.35); }
+
+    /* Feature tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tab { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text2); transition: all 0.2s; }
+    .tab:hover { background: rgba(255,255,255,0.05); color: var(--white); }
+    .tab.active { background: rgba(59,130,246,0.15); border-color: var(--blue); color: var(--white); }
+
+    /* Code */
+    .code-wrap { border-radius: 10px; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; }
+    .code-header { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .code-scroll { max-height: 280px; overflow-y: auto; }
+    .code-scroll::-webkit-scrollbar { width: 5px; }
+    .code-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+    pre { padding: 12px 14px; font-size: 11.5px; line-height: 1.6; color: #c9d1d9; white-space: pre; overflow-x: auto; }
+
+    /* Toggle code */
+    .code-toggle { cursor: pointer; font-size: 12px; font-weight: 600; padding: 8px 14px; display: flex; align-items: center; gap: 6px; color: var(--text2); transition: color 0.2s; }
+    .code-toggle:hover { color: var(--white); }
+    .code-toggle .arrow { transition: transform 0.2s; display: inline-block; }
+    .code-toggle.open .arrow { transform: rotate(90deg); }
+    .code-body { display: none; }
+    .code-body.open { display: block; }
+
+    /* Effort table */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 8px 12px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    th.center, td.center { text-align: center; }
+
+    /* Score bars */
+    .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; }
+    .score-label { width: 200px; flex-shrink: 0; color: var(--text); }
+    .score-track { flex: 1; height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 4px; }
+    .score-val { width: 40px; text-align: right; font-weight: 700; font-size: 12px; }
+
+    /* Callout */
+    .callout { border-radius: 12px; padding: 16px 20px; border-left: 4px solid; }
+    .callout.green { border-color: var(--green); background: rgba(16,185,129,0.06); }
+    .callout.yellow { border-color: var(--yellow); background: rgba(234,179,8,0.06); }
+
+    /* Feature stats row */
+    .feat-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
+    .feat-stat { background: var(--bg2); border-radius: 10px; padding: 10px; text-align: center; }
+    .feat-stat .num { font-size: 22px; font-weight: 900; line-height: 1.2; }
+    .feat-stat .lbl { font-size: 10px; color: var(--text2); }
+
+    /* Compact list */
+    .check-list { font-size: 13px; line-height: 1.8; }
+    .check-list li { list-style: none; padding-left: 20px; position: relative; }
+    .check-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; }
+    .check-list.green li::before { background: var(--green); }
+    .check-list.red li::before { background: var(--red); }
+
+    .fade { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Prank overlay */
+    #prankOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 40px;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #prankOverlay.bye { opacity: 0; transform: scale(1.05); pointer-events: none; }
+    #prankOverlay .prank-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); margin-bottom: 24px; }
+    #prankOverlay h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 16px; }
+    #prankOverlay h1 span { color: var(--orange); }
+    #prankOverlay .prank-sub { font-size: 18px; color: var(--text2); max-width: 640px; line-height: 1.6; margin-bottom: 12px; }
+    #prankOverlay .prank-verdict { display: flex; gap: 32px; margin: 32px 0; }
+    #prankOverlay .prank-score { text-align: center; }
+    #prankOverlay .prank-score .num { font-size: 48px; font-weight: 900; line-height: 1; }
+    #prankOverlay .prank-score .lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
+    #prankOverlay .prank-cta {
+      margin-top: 32px; padding: 16px 48px; border-radius: 14px; font-size: 18px; font-weight: 800;
+      border: none; cursor: pointer; color: white;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      box-shadow: 0 4px 24px rgba(239,68,68,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.5px;
+    }
+    #prankOverlay .prank-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(239,68,68,0.4); }
+    #prankOverlay .prank-disclaimer { font-size: 11px; color: var(--text2); margin-top: 16px; opacity: 0.6; }
+    #realContent { display: none; }
+
+    /* Deep dive */
+    .file-tree { font-size: 12px; line-height: 2; }
+    .file-tree .dir { color: var(--blue); font-weight: 600; }
+    .file-tree .file { color: var(--text); cursor: pointer; padding: 1px 8px; border-radius: 5px; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; }
+    .file-tree .file:hover { background: rgba(255,255,255,0.06); }
+    .file-tree .file.active { background: rgba(59,130,246,0.15); color: var(--white); }
+    .file-tree .file .loc { font-size: 10px; color: var(--text2); font-weight: 600; }
+    .file-tree .file.shared { color: var(--violet); }
+    .file-tree .file.same { color: var(--text2); }
+    .file-tree .indent { padding-left: 16px; }
+    .split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 600px; }
+    @media (max-width: 900px) { .split-view { grid-template-columns: 1fr; } }
+    .split-pane { display: flex; flex-direction: column; border: 1px solid var(--border); overflow: hidden; }
+    .split-pane:first-child { border-radius: 12px 0 0 12px; border-right: none; }
+    .split-pane:last-child { border-radius: 0 12px 12px 0; }
+    @media (max-width: 900px) { .split-pane:first-child { border-radius: 12px 12px 0 0; border-right: 1px solid var(--border); border-bottom: none; } .split-pane:last-child { border-radius: 0 0 12px 12px; } }
+    .pane-header { padding: 10px 16px; font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .pane-body { display: flex; flex: 1; min-height: 0; }
+    .pane-tree { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; padding: 8px; background: rgba(0,0,0,0.2); }
+    .pane-code { flex: 1; overflow: auto; background: var(--bg2); }
+    .pane-code pre { margin: 0; padding: 12px 14px; font-size: 11px; line-height: 1.55; min-height: 100%; }
+    .pane-code .line-hl { background: rgba(59,130,246,0.08); display: block; }
+    .pane-code .line-removed { background: rgba(239,68,68,0.08); display: block; }
+    .pane-code .line-added { background: rgba(16,185,129,0.08); display: block; }
+    .pane-filename { padding: 6px 14px; font-size: 11px; color: var(--text2); border-bottom: 1px solid var(--border); background: var(--bg3); display: flex; justify-content: space-between; flex-shrink: 0; }
+
+    /* Comparison diff */
+    .diff-wrap { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .diff-hdr { padding: 10px 16px; font-size: 12px; font-weight: 600; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .diff-body { padding: 0; margin: 0; background: var(--bg2); font-size: 11.5px; line-height: 1.75; overflow-x: auto; overflow-y: auto; max-height: 560px; }
+    .diff-body .dl { display: block; padding: 0 16px; white-space: pre; min-height: 1.75em; }
+    .diff-body .dl-del { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .diff-body .dl-add { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+    .diff-body .dl-ctx { color: #6b7280; }
+    .diff-body .dl-sep { background: rgba(139,92,246,0.08); color: var(--violet); font-weight: 600; border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); padding-top: 4px; padding-bottom: 4px; margin-top: 2px; }
+    .pattern-step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+    .pattern-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; flex-shrink: 0; background: rgba(59,130,246,0.15); color: var(--blue); }
+    .pattern-content { flex: 1; }
+    .pattern-content h4 { font-size: 14px; color: var(--white); margin-bottom: 4px; }
+    .pattern-code { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 12px; margin-top: 6px; line-height: 1.65; color: #c9d1d9; }
+    .flow-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    @media (max-width: 768px) { .flow-compare { grid-template-columns: 1fr; } }
+    .flow-side { padding: 20px; background: var(--bg2); }
+    .flow-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 2px; }
+    .flow-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .flow-item p { font-size: 12.5px; line-height: 1.5; }
+    .flow-item code { font-size: 11px; background: var(--bg); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border); }
+
+    /* Demo */
+    .demo-frame { width: 100%; height: 860px; border: 2px solid var(--border); border-radius: 14px; background: var(--bg2); }
+    .demo-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 560px; border: 2px dashed var(--border); border-radius: 14px; background: var(--bg2); }
+    .demo-cmd { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 12px; display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer; }
+    .demo-cmd:hover { border-color: var(--blue); }
+    .demo-tabs { display: flex; gap: 0; margin-bottom: 0; }
+    .demo-tab { padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); transition: all 0.2s; }
+    .demo-tab:first-child { border-radius: 10px 0 0 0; }
+    .demo-tab:last-child { border-radius: 0 10px 0 0; }
+    .demo-tab.active { background: var(--bg); color: var(--white); border-bottom-color: var(--bg); }
+  </style>
+</head>
+<body>
+
+<!-- Prank overlay -->
+<div id="prankOverlay">
+  <div class="prank-badge">
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.5s infinite"></span>
+    Final Feasibility Verdict
+  </div>
+  <h1>Pure React <span>Wins.</span><br>KMM is Not Worth It.</h1>
+  <p class="prank-sub">After extensive analysis of 5 features, 3,400+ lines of code, and build pipeline complexity — the data clearly shows KMM adds unnecessary overhead for web development.</p>
+  <div class="prank-verdict">
+    <div class="prank-score"><div class="num" style="color:var(--orange)">A+</div><div class="lbl">React Only</div></div>
+    <div class="prank-score"><div class="num" style="color:var(--red)">D-</div><div class="lbl">React + KMM</div></div>
+    <div class="prank-score"><div class="num" style="color:var(--red)">+81MB</div><div class="lbl">Build Bloat</div></div>
+  </div>
+  <button class="prank-cta" onclick="revealAnalysis()">See the Full Analysis</button>
+  <div class="prank-disclaimer">Based on POC feasibility study — Subscription Pass Feature</div>
+</div>
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
+<audio id="prankAudio" preload="auto"><source src="faaa.mp3" type="audio/mpeg"></audio>
+<script>
+function revealAnalysis(){
+  var a=document.getElementById('prankAudio');
+  a.volume=1;a.play().catch(function(){});
+  document.getElementById('prankOverlay').classList.add('bye');
+  document.getElementById('realContent').style.display='block';
+  document.title='KMM Feasibility Analysis \u2014 React vs React + KMM';
+  setTimeout(function(){document.getElementById('prankOverlay').style.display='none'},700);
+}
+</script>
+
+<div id="realContent">
+<!-- Nav -->
+<nav>
+  <div class="inner">
+    <div class="logo"><div class="logo-icon">K</div> KMM Analysis</div>
+    <div style="display:flex;gap:2px;" id="navLinks">
+      <a href="#summary">Summary</a>
+      <a href="#metrics">Metrics</a>
+      <a href="#features">Comparison</a>
+      <a href="#demo">Demo</a>
+      <a href="#effort">Effort</a>
+      <a href="#verdict">Verdict</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header style="padding:80px 0 40px">
+  <div class="container" style="text-align:center">
+    <div class="badge glass" style="color:var(--blue);margin-bottom:16px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block"></span>
+      POC Feasibility Study — Subscription Pass Feature
+    </div>
+    <h1>Pure React <span class="gradient-text">vs React + KMM</span></h1>
+    <p style="color:var(--text2);max-width:560px;margin:16px auto 0;font-size:15px">
+      Side-by-side code comparison — lines of code, developer effort, and reuse across Web, Android & iOS.
+    </p>
+  </div>
+</header>
+
+<!-- Summary -->
+<section id="summary">
+  <div class="container">
+    <h2>Executive Summary</h2>
+    <p class="subtitle">What a frontend engineer writes for each approach (KMM Kotlin code assumed already written).</p>
+
+    <div class="grid-3">
+      <div class="card glass" style="border-left:3px solid var(--orange)">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:700;margin-bottom:8px">React Only</div>
+        <div class="stat" style="color:var(--orange)">~3,400</div>
+        <div class="label">Total lines of code</div>
+        <div style="margin-top:12px">
+          <div class="metric-row"><span>UI Components</span><span style="color:var(--white)">1,233</span></div>
+          <div class="metric-row"><span>Screens</span><span style="color:var(--white)">1,092</span></div>
+          <div class="metric-row"><span>Hooks (all logic)</span><span style="color:var(--orange);font-weight:600">~880</span></div>
+          <div class="metric-row"><span>Types</span><span style="color:var(--white)">172</span></div>
+        </div>
+      </div>
+
+      <div class="card glass" style="border-left:3px solid var(--blue)">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--blue);font-weight:700;margin-bottom:8px">React + KMM</div>
+        <div style="display:flex;align-items:baseline;gap:8px;justify-content:center;flex-wrap:wrap">
+          <div class="stat" style="color:var(--blue);text-decoration:line-through;opacity:0.4;font-size:28px">~2,900</div>
+          <div class="stat" style="color:var(--green)">~2,700</div>
+        </div>
+        <div class="label">React code to write <span style="color:var(--green)">(with reusable helper)</span></div>
+        <div style="margin-top:12px">
+          <div class="metric-row"><span>UI Components</span><span style="color:var(--white)">1,233</span></div>
+          <div class="metric-row"><span>Screens</span><span style="color:var(--white)">1,092</span></div>
+          <div class="metric-row"><span>Hooks (bridge)</span><span style="color:var(--blue);font-weight:600;text-decoration:line-through;opacity:0.5">~483</span><span style="color:var(--green);font-weight:700;margin-left:6px">~300</span></div>
+          <div class="metric-row"><span>Types + Bridge</span><span style="color:var(--white)">201</span></div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;font-size:12px;color:var(--green);line-height:1.5;text-align:center">
+          A shared <strong>useKmmViewModel()</strong> helper eliminates repeated boilerplate from every hook
+        </div>
+      </div>
+
+      <div class="card glass" style="border-left:3px solid var(--green)">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--green);font-weight:700;margin-bottom:8px">3-Platform Win</div>
+        <div class="stat" style="color:var(--green)">67%</div>
+        <div class="label">Less business logic code across 3 platforms</div>
+        <div style="margin-top:12px">
+          <div class="metric-row"><span>Without KMM (3×)</span><span style="color:var(--red)">~7,290 LOC</span></div>
+          <div class="metric-row"><span>With KMM (1×)</span><span style="color:var(--green)">~2,430 LOC</span></div>
+          <div class="metric-row"><span>Saved</span><span style="color:var(--green);font-weight:700">~4,860 LOC</span></div>
+          <div class="metric-row"><span>Web-only savings</span><span style="color:var(--yellow)">~15%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Metrics — compact CSS bars -->
+<section id="metrics" style="padding-top:0">
+  <div class="container">
+    <h2>Hook-Level LOC Comparison</h2>
+    <p class="subtitle">Where the logic difference lives — React Only hooks embed all business logic, React+KMM hooks are thin bridges.</p>
+
+    <div class="card glass" style="padding:20px">
+      <div id="barChart"></div>
+      <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--text2)">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(245,158,11,0.5);margin-right:4px"></span>React Only</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(59,130,246,0.5);margin-right:4px"></span>React + KMM</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(139,92,246,0.35);margin-right:4px"></span>Shared KMM Kotlin (reused 3×)</span>
+      </div>
+    </div>
+
+    <!-- Compact stats row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
+      <div class="card glass" style="text-align:center;padding:14px">
+        <div class="stat-sm" style="color:var(--orange)">880</div>
+        <div class="label">React-Only Hooks</div>
+      </div>
+      <div class="card glass" style="text-align:center;padding:14px">
+        <div class="stat-sm" style="color:var(--blue)">483</div>
+        <div class="label">React+KMM Hooks</div>
+        <div style="font-size:10px;color:var(--green);margin-top:4px">can be ~300 with helper</div>
+      </div>
+      <div class="card glass" style="text-align:center;padding:14px">
+        <div class="stat-sm" style="color:var(--green)">45%</div>
+        <div class="label">Less Hook Code</div>
+      </div>
+      <div class="card glass" style="text-align:center;padding:14px">
+        <div class="stat-sm" style="color:var(--violet)">2,430</div>
+        <div class="label">Shared KMM LOC</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison — React Developer's Perspective -->
+<section id="features">
+  <div class="container" id="comparisonRoot">
+    <!-- Populated by comparison.js -->
+  </div>
+  <!-- Hidden targets for legacy JS (prevents errors) -->
+  <div id="featureTabs" style="display:none"></div>
+  <div id="featureContent" style="display:none"></div>
+</section>
+
+<!-- Demo -->
+<section id="demo">
+  <div class="container">
+    <h2>Live App Demo</h2>
+    <p class="subtitle">Run both POC apps side-by-side to see they're functionally identical — same UI, same flow, different architecture underneath.</p>
+
+    <div class="grid-2" style="gap:0">
+      <div>
+        <div class="demo-tab active" style="border-radius:10px 0 0 0;text-align:center;display:block;color:var(--orange)">React Only — Port 5173</div>
+      </div>
+      <div>
+        <div class="demo-tab active" style="border-radius:0 10px 0 0;text-align:center;display:block;color:var(--blue)">React + KMM — Port 5174</div>
+      </div>
+    </div>
+    <div class="grid-2" style="gap:0" id="demoFrames">
+      <div class="demo-placeholder" style="border-radius:0 0 0 12px;border-right:none" id="demoLeft">
+        <div style="text-align:center">
+          <div style="font-size:40px;margin-bottom:12px">&#9654;</div>
+          <h3 style="margin-bottom:8px">React Only App</h3>
+          <p style="font-size:12px;color:var(--text2);max-width:260px;margin:0 auto 16px">Start the dev server to see the live app here.</p>
+          <div class="demo-cmd" onclick="copyCmd('cd react-only/app && npm run dev -- --port 5173')">
+            <span class="mono" style="color:var(--orange)">cd react-only/app && npm run dev -- --port 5173</span>
+            <span style="font-size:10px;color:var(--text2)">copy</span>
+          </div>
+        </div>
+      </div>
+      <div class="demo-placeholder" style="border-radius:0 0 12px 0" id="demoRight">
+        <div style="text-align:center">
+          <div style="font-size:40px;margin-bottom:12px">&#9654;</div>
+          <h3 style="margin-bottom:8px">React + KMM App</h3>
+          <p style="font-size:12px;color:var(--text2);max-width:260px;margin:0 auto 16px">Start the dev server to see the live app here.</p>
+          <div class="demo-cmd" onclick="copyCmd('cd react-kmm/app && npm run dev -- --port 5174')">
+            <span class="mono" style="color:var(--blue)">cd react-kmm/app && npm run dev -- --port 5174</span>
+            <span style="font-size:10px;color:var(--text2)">copy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:center">
+      <button onclick="loadDemos()" class="tab" style="color:var(--green)">Load Both Apps</button>
+      <button onclick="resetDemos()" class="tab">Reset</button>
+    </div>
+
+    <div class="callout yellow" style="margin-top:16px">
+      <strong style="color:var(--white)">How to test:</strong> <span style="font-size:13px">Open a terminal and run both commands above, then click "Load Both Apps". Both apps will embed side-by-side. Navigate through Plan Selection → Pass Setup → Calendar → Checkout → My Subscription in each. They look and behave identically — the difference is only in what code powers them.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Effort -->
+<section id="effort">
+  <div class="container">
+    <h2>Developer Effort</h2>
+    <p class="subtitle">Estimated time for a frontend engineer building this feature.</p>
+
+    <div class="card glass" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th class="center" style="color:var(--orange)">React Only</th>
+            <th class="center" style="color:var(--blue)">React + KMM</th>
+            <th class="center" style="color:var(--green)">Saved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:var(--white)">UI components & screens</td><td class="center">3-4 days</td><td class="center">3-4 days</td><td class="center" style="color:var(--text2)">—</td></tr>
+          <tr><td style="color:var(--white)">Calendar algorithm</td><td class="center">1-2 days</td><td class="center" style="color:var(--green)">0</td><td class="center" style="color:var(--green)">1-2 days</td></tr>
+          <tr><td style="color:var(--white)">Pricing / validation</td><td class="center">0.5-1 day</td><td class="center" style="color:var(--green)">0</td><td class="center" style="color:var(--green)">0.5-1 day</td></tr>
+          <tr><td style="color:var(--white)">State management hooks</td><td class="center">2-3 days</td><td class="center">1-1.5 days</td><td class="center" style="color:var(--green)">1-1.5 days</td></tr>
+          <tr><td style="color:var(--white)">API integration / mocks</td><td class="center">1 day</td><td class="center" style="color:var(--green)">0</td><td class="center" style="color:var(--green)">1 day</td></tr>
+          <tr><td style="color:var(--white)">KMM bridge setup</td><td class="center" style="color:var(--text2)">—</td><td class="center">0.5-1 day</td><td class="center" style="color:var(--red)">+0.5-1 day</td></tr>
+          <tr><td style="color:var(--white)">Testing business logic</td><td class="center">1-2 days</td><td class="center" style="color:var(--green)">0</td><td class="center" style="color:var(--green)">1-2 days</td></tr>
+          <tr style="border-top:2px solid rgba(255,255,255,0.15)">
+            <td style="color:var(--white);font-weight:700">Total</td>
+            <td class="center" style="color:var(--orange);font-weight:700">8.5-13 days</td>
+            <td class="center" style="color:var(--blue);font-weight:700">4.5-7.5 days</td>
+            <td class="center" style="color:var(--green);font-weight:700">~4-5.5 days</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Maintenance side by side -->
+    <div class="grid-2" style="margin-top:16px">
+      <div class="card glass">
+        <h3 style="color:var(--orange);margin-bottom:8px">React Only — Maintenance</h3>
+        <ul class="check-list red">
+          <li>Logic changes need separate web PR</li>
+          <li>Bug in calendar? Fix in 3 places</li>
+          <li>Pricing formula change? 3 codebases</li>
+          <li>Risk of logic divergence</li>
+        </ul>
+        <ul class="check-list green" style="margin-top:8px">
+          <li>Simpler build pipeline</li>
+          <li>All TypeScript — easier debugging</li>
+        </ul>
+      </div>
+      <div class="card glass">
+        <h3 style="color:var(--blue);margin-bottom:8px">React + KMM — Maintenance</h3>
+        <ul class="check-list green">
+          <li>Fix once, all platforms get it</li>
+          <li>Guaranteed logic consistency</li>
+          <li>Tests written once</li>
+          <li>Logic changes land automatically</li>
+        </ul>
+        <ul class="check-list red" style="margin-top:8px">
+          <li>KMM build complexity (Gradle)</li>
+          <li>Debugging crosses Kotlin/JS boundary</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Verdict -->
+<section id="verdict">
+  <div class="container">
+    <h2>Verdict</h2>
+
+    <div class="callout green" style="margin-bottom:16px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+        <span style="font-size:32px;font-weight:900;color:var(--green)">Worth It</span>
+        <span style="color:var(--text2);font-size:13px">if you already have KMM on Android + target 3 platforms</span>
+      </div>
+      <div style="font-size:13px;color:var(--text);line-height:1.7">
+        <strong style="color:var(--white)">1. Complex shared logic</strong> — Calendar algorithms, pricing, validation are error-prone when duplicated.<br>
+        <strong style="color:var(--white)">2. Multi-platform (Android+iOS+Web)</strong> — Write 2,430 LOC once vs 7,290 LOC across 3 codebases.<br>
+        <strong style="color:var(--white)">3. Existing Kotlin team</strong> — Frontend just consumes, no Kotlin expertise needed.<br>
+        <strong style="color:var(--white)">4. Frequent logic changes</strong> — Pricing update = 1 PR instead of 3.
+      </div>
+    </div>
+
+    <div class="callout yellow" style="margin-bottom:24px">
+      <h3 style="margin-bottom:6px">When KMM might NOT be worth it</h3>
+      <div style="font-size:13px;color:var(--text);line-height:1.7">
+        <strong style="color:var(--white)">Web-only:</strong> 15% savings doesn't justify build complexity.
+        <strong style="color:var(--white)">Simple CRUD:</strong> Overhead exceeds savings.
+        <strong style="color:var(--white)">No Kotlin team:</strong> Weeks of ramp-up.
+        <strong style="color:var(--white)">UI-heavy changes:</strong> KMM shares logic, not UI.
+      </div>
+    </div>
+
+    <!-- Scorecard -->
+    <div class="card glass">
+      <h3 style="margin-bottom:14px">Scorecard</h3>
+      <div id="scorecard"></div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:32px 0;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text2)">
+  KMM Feasibility Analysis — POC Subscription Pass App
+</footer>
+
+<script>
+// ======= DATA =======
+const hooks = [
+  { name: 'usePlanSelection', ro: 93, rk: 50, km: 94 },
+  { name: 'usePassSetup', ro: 160, rk: 181, km: 329 },
+  { name: 'useCalendar', ro: 210, rk: 91, km: 477 },
+  { name: 'useCheckout', ro: 163, rk: 77, km: 273 },
+  { name: 'useMySubscription', ro: 150, rk: 55, km: 150 },
+];
+
+const scores = [
+  { label: 'Code Reuse (3 platforms)', val: 9, color: 'var(--green)' },
+  { label: 'Web-Only LOC Savings', val: 4, color: 'var(--yellow)' },
+  { label: 'Logic Consistency', val: 10, color: 'var(--green)' },
+  { label: 'Build Simplicity', val: 3, color: 'var(--red)' },
+  { label: 'Developer Experience', val: 6, color: 'var(--yellow)' },
+  { label: 'Long-term Maintenance', val: 8, color: 'var(--green)' },
+  { label: 'Overall', val: 7.5, color: 'var(--blue)' },
+];
+
+const featureData = {
+planSelection: {
+  title: 'Plan Selection', desc: 'Fetch plans, handle selection, proceed to setup.',
+  ro: 93, rk: 50, km: 94,
+  roCode: `// usePlanSelection.ts — React Only (93 LOC)
+// ALL logic here: mock data, state, selection
+
+const MOCK_PLANS: PlanItem[] = [
+  { name: 'Weekly One-Way', slug: 'weekly-oneway',
+    totalRides: 6, pricePerRide: 85, totalPrice: 510,
+    duration: '7 days', isRoundTrip: false,
+    features: ['6 rides/week', 'Flexible', 'Cancel anytime'] },
+  { name: 'Monthly Round-Trip', slug: 'monthly-roundtrip',
+    totalRides: 44, pricePerRide: 65, totalPrice: 2860,
+    duration: '30 days', isRoundTrip: true,
+    features: ['44 rides', 'Morning + Evening'],
+    savingsText: 'Save ₹880/month' },
+  // ... 2 more plans
+]
+
+export function usePlanSelection() {
+  const [state, setState] = useState<UiState<PlanSelectionData>>(
+    { status: 'loading' }
+  )
+
+  useEffect(() => {
+    // Simulate API — YOU manage mock data
+    setTimeout(() => {
+      setState({
+        status: 'success',
+        data: {
+          plans: MOCK_PLANS,
+          selectedPlanSlug: undefined,
+          comparisonHighlight: 'Save up to 24% with Monthly',
+        },
+      })
+    }, 800)
+  }, [])
+
+  const selectPlan = useCallback((slug: string) => {
+    setState(prev => {
+      if (prev.status !== 'success') return prev
+      return { ...prev,
+        data: { ...prev.data!, selectedPlanSlug: slug }
+      }
+    })
+  }, [])
+
+  return { state, selectPlan, proceed: () => {} }
+}`,
+  rkCode: `// usePlanSelection.ts — React + KMM (50 LOC)
+// Thin bridge — NO business logic
+
+import { createPlanSelectionVM } from './kmmModule'
+
+export function usePlanSelection() {
+  const [state, setState] = useState({ status: 'loading' })
+  const vmRef = useRef<any>(null)
+
+  useEffect(() => {
+    const vm = createPlanSelectionVM()
+    vmRef.current = vm
+
+    // Subscribe to Kotlin StateFlow
+    const cancelState = vm.observeState(s => setState(s))
+    const cancelEffect = vm.observeEffect(e => {
+      if (e.type === 'NavigateToPassSetup') {
+        localStorage.setItem('selectedPlanSlug', e.plan.slug)
+      }
+    })
+
+    vm.fetchPlans() // Tell KMM to fetch
+
+    return () => {
+      cancelState(); cancelEffect(); vm.destroy()
+    }
+  }, [])
+
+  // Just forward to ViewModel
+  const selectPlan = useCallback(
+    slug => vmRef.current?.selectPlan(slug), []
+  )
+  const proceed = useCallback(
+    () => vmRef.current?.proceedWithPlan(), []
+  )
+
+  return { state, selectPlan, proceed }
+}`,
+  kmCode: `// PlanSelectionViewModel.kt — Shared (94 LOC)
+// Runs on Android + iOS + Web
+
+class PlanSelectionViewModel(
+  private val repo: IPlanRepository,
+  private val analytics: SubscriptionAnalytics,
+) : BaseViewModel<State, Event, Effect>(State()) {
+
+  private fun fetchPlans() {
+    launchSafe {
+      updateState { copy(isLoading = true) }
+      repo.getPlans().onSuccess { response ->
+        val plans = response.plans.map { PlanMapper.toUiModel(it) }
+        val popular = plans.firstOrNull { it.isPopular }
+        updateState { copy(
+          isLoading = false, plans = plans,
+          selectedSlug = popular?.slug,
+          comparisonHighlight = buildComparisonText(plans)
+        )}
+        analytics.track(PlansViewed(plans.size))
+      }
+    }
+  }
+
+  private fun selectPlan(slug: String) {
+    updateState { copy(selectedSlug = slug) }
+    analytics.track(PlanSelected(slug))
+  }
+
+  private fun proceedWithPlan() {
+    val plan = currentState.plans
+      .firstOrNull { it.slug == currentState.selectedSlug }
+    if (plan != null)
+      sendEffect(NavigateToPassSetup(plan))
+  }
+}`
+},
+passSetup: {
+  title: 'Pass Setup', desc: 'Dual-shift config with stops, calendar, validation. Most complex feature.',
+  ro: 160, rk: 181, km: 329,
+  roCode: `// usePassSetup.ts — React Only (~160 LOC)
+// Shift logic, stop management, validation ALL here
+
+const MOCK_PICKUP_STOPS = [
+  { id: 'p-1', name: 'Borivali Station', time: '7:15 AM' },
+  { id: 'p-2', name: 'Kandivali East', time: '7:30 AM' },
+]
+const MOCK_DROPOFF_STOPS = [
+  { id: 'd-1', name: 'BKC Platina', time: '9:00 AM' },
+  { id: 'd-2', name: 'Airoli Sector 5', time: '9:15 AM' },
+]
+
+function checkProceedEnabled(shifts, isRoundTrip) {
+  const m = shifts['MORNING']
+  if (!m?.pickupStop || !m?.dropOffStop) return false
+  if (isRoundTrip) {
+    const e = shifts['EVENING']
+    if (!e?.pickupStop || !e?.dropOffStop) return false
+  }
+  return true
+}
+
+export function usePassSetup() {
+  const [state, setState] = useState({ status: 'loading' })
+  const [activeShiftTab, setActiveShiftTab] = useState('MORNING')
+
+  useEffect(() => {
+    setTimeout(() => {
+      setState({
+        status: 'success',
+        data: {
+          planName: 'Monthly Round-Trip',
+          shifts: { MORNING: makeEmptyShift(), EVENING: makeEmptyShift() },
+          isRoundTrip: true, isProceedEnabled: false,
+        },
+      })
+    }, 600)
+  }, [])
+
+  const selectPickupStop = useCallback((key, stop) => {
+    setState(prev => {
+      // Deep-clone shift, update stop, recheck proceed
+      const shifts = { ...prev.data.shifts }
+      const shift = { ...shifts[key], pickupStop: stop }
+      shift.hasStops = !!(stop && shift.dropOffStop)
+      shifts[key] = shift
+      return { ...prev, data: { ...prev.data, shifts,
+        isProceedEnabled: checkProceedEnabled(shifts, true)
+      }}
+    })
+  }, [])
+
+  const selectDropOffStop = useCallback((key, stop) => {
+    // Same pattern — deep clone, update, recheck
+    setState(prev => { /* ... similar */ })
+  }, [])
+
+  const onScheduleConfirmed = useCallback((dates, weekDays) => {
+    setState(prev => {
+      const shifts = { ...prev.data.shifts }
+      const shift = { ...shifts[activeShiftTab] }
+      shift.selectedDates = dates
+      shift.scheduleSummary = dates.length + ' days selected'
+      shift.isConfigured = shift.hasStops && dates.length > 0
+      shifts[activeShiftTab] = shift
+      return { ...prev, data: { ...prev.data, shifts,
+        isProceedEnabled: checkProceedEnabled(shifts, true)
+      }}
+    })
+  }, [activeShiftTab])
+
+  return { state, activeShiftTab, setActiveShiftTab,
+    selectPickupStop, selectDropOffStop, onScheduleConfirmed }
+}`,
+  rkCode: `// usePassSetup.ts — React + KMM (181 LOC)
+// Longer than React Only due to effect handling
+// but ZERO business logic — just plumbing
+
+import { createPassSetupVM } from './kmmModule'
+
+export function usePassSetup() {
+  const [state, setState] = useState({ status: 'loading' })
+  const [activeShiftTab, setActiveShiftTabLocal] = useState('MORNING')
+  const vmRef = useRef(null)
+
+  useEffect(() => {
+    const vm = createPassSetupVM()
+    vmRef.current = vm
+
+    const cancelState = vm.observeState(s => setState(s))
+    const cancelEffect = vm.observeEffect(e => {
+      switch (e.type) {
+        case 'OpenStopPicker':
+          // Open bottom sheet with stops from KMM
+          setPickupSheetOpen(e.isPickup)
+          break
+        case 'LaunchCalendar':
+          // Stash calendar params for CalendarScreen
+          localStorage.setItem('calendarParams',
+            JSON.stringify({ calendarDataJson: e.calendarDataJson,
+              totalRidesPerShift: e.totalRidesPerShift }))
+          break
+        case 'NavigateToCheckout':
+          localStorage.setItem('checkoutBaseFare',
+            String(e.baseFarePerRide))
+          break
+      }
+    })
+
+    vm.fetchPrefillData(
+      localStorage.getItem('selectedPlanSlug') || ''
+    )
+    return () => { cancelState(); cancelEffect(); vm.destroy() }
+  }, [])
+
+  // Forward actions to ViewModel
+  const setActiveShiftTab = useCallback(tab => {
+    setActiveShiftTabLocal(tab)
+    vmRef.current?.selectShiftTab(tab)
+  }, [])
+  const selectPickupStop = useCallback((key, stop) => {
+    vmRef.current?.setPickupStop(key, stop.id, stop.name, stop.time)
+  }, [])
+  const selectDropOffStop = useCallback((key, stop) => {
+    vmRef.current?.setDropOffStop(key, stop.id, stop.name, stop.time)
+  }, [])
+  const onScheduleConfirmed = useCallback((dates, weekDays) => {
+    vmRef.current?.onScheduleConfirmed(activeShiftTab, dates, weekDays)
+  }, [activeShiftTab])
+
+  return { state, activeShiftTab, setActiveShiftTab,
+    selectPickupStop, selectDropOffStop, onScheduleConfirmed }
+}`,
+  kmCode: `// PassSetupViewModel.kt — Shared (329 LOC)
+// Dual-shift management, stop fetch, calendar cache,
+// validation, analytics — ALL shared 3 platforms
+
+class PassSetupViewModel(
+  private val subRepo: ISubscriptionRepository,
+  private val calRepo: ICalendarRepository,
+  private val analytics: SubscriptionAnalytics,
+) : BaseViewModel<State, Event, Effect>(...) {
+
+  private val calendarCache = mutableMapOf<String, CalendarResponseDto>()
+
+  private fun fetchPrefillData(planSlug: String) {
+    launchSafe {
+      subRepo.getPrefillData(planSlug).onSuccess { response ->
+        updateState { PassSetupMapper.toState(response) }
+        analytics.track(PassSetupStarted(planSlug))
+      }
+    }
+  }
+
+  private fun setStop(shiftKey: String, stopId: Int,
+                      name: String, time: String) {
+    updateState { /* update shift with stop */ }
+    if (currentState.shifts[shiftKey]?.hasStops == true) {
+      fetchCalendarData(shiftKey) // auto-fetch calendar
+    }
+  }
+
+  private fun fetchCalendarData(shiftKey: String) {
+    launchSafe {
+      val cached = calendarCache[shiftKey]
+      if (cached != null) { updateShiftWithCalendar(shiftKey, cached); return }
+      calRepo.getCalendarData(shiftKey).onSuccess {
+        calendarCache[shiftKey] = it
+        updateShiftWithCalendar(shiftKey, it)
+      }
+    }
+  }
+
+  private fun onScheduleConfirmed(shiftKey: String,
+      dates: List<String>, weekDays: List<Int>) {
+    updateState { /* update shift with dates */ }
+    if (currentState.isRoundTrip) {
+      validateOppositeShift(shiftKey, weekDays)
+    }
+  }
+  // ... stop picker, calendar launch, checkout nav, analytics
+}`
+},
+calendar: {
+  title: 'Calendar Selection', desc: 'Date-selection algorithm with weekday filtering, holidays, ride quotas. Strongest KMM case.',
+  ro: 210, rk: 91, km: 477,
+  roCode: `// useCalendar.ts — React Only (~210 LOC)
+// ⚠️ Calendar algorithm reimplemented in TypeScript
+// Must be kept in sync with CalendarEngine.kt manually
+
+const HOLIDAY_OFFSETS = [8, 17]
+const HOLIDAY_REMARKS = ['Holi', 'Good Friday']
+
+function getDayOfWeekIndex(d: Date): number {
+  const jsDay = d.getDay()
+  return jsDay === 0 ? 6 : jsDay - 1
+}
+
+// ⚠️ Must EXACTLY match CalendarEngine.buildCalendarDates()
+function generateCalendarDates(weekDays, totalRidesNeeded) {
+  const today = new Date()
+  const dates = [], holidayRemarks = []
+  const selectedIndices = new Set(
+    weekDays.filter(w => w.isSelected).map(w => w.index)
+  )
+  let selectedCount = 0
+
+  for (let i = 0; i < 45; i++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() + i)
+    const dayIdx = getDayOfWeekIndex(d)
+    const isWeekend = dayIdx === 5 || dayIdx === 6
+    const holidayIdx = HOLIDAY_OFFSETS.indexOf(i)
+    const isHoliday = holidayIdx !== -1
+
+    if (isHoliday) holidayRemarks.push(
+      formatDisplayDate(d) + ' - ' + HOLIDAY_REMARKS[holidayIdx]
+    )
+
+    const isAvailable = !isWeekend && !isHoliday
+    const shouldSelect = isAvailable
+      && selectedIndices.has(dayIdx)
+      && selectedCount < totalRidesNeeded
+    if (shouldSelect) selectedCount++
+
+    dates.push({
+      date: formatDate(d), dayOfMonth: d.getDate(),
+      isHoliday, isWeekend, isSelected: shouldSelect,
+      isStartDate: false, isEndDate: false, isAvailable,
+    })
+  }
+  // Mark start/end
+  const sel = dates.filter(d => d.isSelected)
+  if (sel.length) {
+    sel[0].isStartDate = true
+    sel[sel.length-1].isEndDate = true
+  }
+  return { dates, holidayRemarks }
+}
+
+// ⚠️ Must match CalendarEngine.recalculateFromStartDate()
+function recalculateDates(weekDays, startFrom, totalRidesNeeded) {
+  const { dates, holidayRemarks } = generateCalendarDates(
+    weekDays, totalRidesNeeded
+  )
+  if (startFrom) {
+    let selecting = false, count = 0
+    const indices = new Set(weekDays.filter(w => w.isSelected).map(w => w.index))
+    for (const d of dates) {
+      d.isSelected = false
+      if (d.date === startFrom) selecting = true
+      if (selecting && d.isAvailable && count < totalRidesNeeded) {
+        if (indices.has(getDayOfWeekIndex(new Date(d.date)))) {
+          d.isSelected = true; count++
+        }
+      }
+    }
+    // re-mark start/end ...
+  }
+  return { dates, holidayRemarks }
+}
+
+export function useCalendar() {
+  // ... useState, useEffect with generateCalendarDates
+  // toggleWeekDay → recalculateDates
+  // selectDate → recalculateDates from new start
+  // 80+ lines of state wiring
+}`,
+  rkCode: `// useCalendar.ts — React + KMM (91 LOC)
+// NO calendar algorithm — it's in CalendarEngine.kt
+// Just bridge to CalendarViewModel
+
+import { createCalendarVM } from './kmmModule'
+
+export function useCalendar() {
+  const [state, setState] = useState({ status: 'loading' })
+  const vmRef = useRef(null)
+
+  useEffect(() => {
+    const vm = createCalendarVM()
+    vmRef.current = vm
+
+    const cancelState = vm.observeState(s => setState(s))
+    const cancelEffect = vm.observeEffect(e => {
+      if (e.type === 'NavigateBackWithDates') {
+        localStorage.setItem('confirmedDates',
+          JSON.stringify(e.selectedDates))
+        localStorage.setItem('confirmedWeekDays',
+          JSON.stringify(e.selectedWeekDays))
+      }
+    })
+
+    // Init from PassSetup params
+    const p = JSON.parse(
+      localStorage.getItem('calendarParams') || '{}'
+    )
+    vm.initialize(
+      p.calendarDataJson || '{}',
+      p.totalRidesPerShift || 22,
+      p.selectedWeekDays || [0,1,2,3,4],
+      p.selectedDates || [],
+      p.maxValidStartDate || '',
+      p.minimumDaysPerWeek || 5,
+    )
+
+    return () => { cancelState(); cancelEffect(); vm.destroy() }
+  }, [])
+
+  // Just forward — KMM does all calculation
+  const toggleWeekDay = useCallback(i =>
+    vmRef.current?.toggleWeekDay(i), [])
+  const selectDate = useCallback(d =>
+    vmRef.current?.selectDate(d), [])
+  const confirmDates = useCallback(() =>
+    vmRef.current?.confirmDates(), [])
+
+  return { state, toggleWeekDay, selectDate, confirmDates }
+}`,
+  kmCode: `// CalendarEngine.kt (209 LOC) + CalendarViewModel.kt (268 LOC)
+// = 477 LOC shared across Android, iOS, Web
+// Bug fix here = bug fix everywhere
+
+object CalendarEngine {
+
+  fun buildCalendarDates(
+    calendarDates: List<CalendarDateDto>,
+    selectedWeekDays: List<Int>,
+    totalRidesNeeded: Int,
+    existingSelectedDates: List<String>,
+  ): List<CalendarDateUiModel> {
+    val weekDaySet = selectedWeekDays.toSet()
+    val existingSet = existingSelectedDates.toSet()
+    var selectedCount = 0
+
+    return calendarDates.map { dto ->
+      val date = DateUtils.parseDate(dto.date)
+      val dayOfWeek = DateUtils.dayOfWeekIndex(date)
+      val isWeekend = DateUtils.isWeekend(date)
+      val isAvailable = !isWeekend && !dto.isHoliday
+
+      val shouldSelect = if (existingSet.isNotEmpty())
+        dto.date in existingSet
+      else
+        isAvailable && dayOfWeek in weekDaySet
+          && selectedCount < totalRidesNeeded
+
+      if (shouldSelect) selectedCount++
+
+      CalendarDateUiModel(
+        date = dto.date,
+        dayOfMonth = date.dayOfMonth.toString(),
+        isHoliday = dto.isHoliday,
+        isWeekend = isWeekend,
+        isSelected = shouldSelect,
+        isAvailable = isAvailable,
+      )
+    }.also { markStartEnd(it) }
+  }
+
+  fun recalculateFromStartDate(
+    dates: List<CalendarDateUiModel>,
+    startDate: String,
+    weekDays: List<Int>,
+    totalRides: Int,
+  ): List<CalendarDateUiModel> {
+    val weekDaySet = weekDays.toSet()
+    var selecting = false; var count = 0
+    for (d in dates) {
+      d.isSelected = false
+      if (d.date == startDate) selecting = true
+      if (selecting && d.isAvailable && count < totalRides) {
+        val dow = DateUtils.dayOfWeekIndex(DateUtils.parseDate(d.date))
+        if (dow in weekDaySet) { d.isSelected = true; count++ }
+      }
+    }
+    return dates.also { markStartEnd(it) }
+  }
+
+  fun validateOtherShiftCompatibility(
+    dates: List<CalendarDateDto>,
+    weekDays: List<Int>,
+    ridesNeeded: Int,
+  ): Boolean { /* ... count available matching dates */ }
+}`
+},
+checkout: {
+  title: 'Checkout', desc: 'Pricing calculation, payment selection, order placement.',
+  ro: 163, rk: 77, km: 273,
+  roCode: `// useCheckout.ts — React Only (163 LOC)
+// Hardcoded pricing, payment methods, wallet logic
+
+// ⚠️ Must match PricingCalculator.kt formula
+const MOCK_PRICING = {
+  baseFarePerRide: 65,
+  totalRides: 44,
+  baseFareTotal: 2860,     // 65 × 44
+  convenienceFee: 25,      // flat ₹25
+  gstRate: 5,
+  gstAmount: 144.25,       // 5% of (2860 + 25)
+  walletCredit: 500,
+  totalPayable: 2529.25,   // 2860+25+144.25-500
+}
+
+const MOCK_PAYMENT_METHODS = [
+  { id: 'wallet', label: 'Wallet', desc: '₹1,200' },
+  { id: 'upi', label: 'UPI', desc: 'Google Pay' },
+  { id: 'card', label: 'Card', desc: 'Credit/Debit' },
+]
+const WALLET_BALANCE = 1200
+
+export function useCheckout() {
+  const navigate = useNavigate()
+  const [state, setState] = useState({ status: 'loading' })
+
+  useEffect(() => {
+    setTimeout(() => {
+      setState({
+        status: 'success',
+        data: {
+          pricing: MOCK_PRICING,
+          paymentMethods: MOCK_PAYMENT_METHODS,
+          selectedPaymentMethod: null,
+          walletBalance: WALLET_BALANCE,
+          isWalletInsufficient: false,
+          termsAccepted: false,
+          isPlaceOrderEnabled: false,
+          isProcessing: false,
+        },
+      })
+    }, 500)
+  }, [])
+
+  const selectPaymentMethod = useCallback(id => {
+    setState(prev => {
+      const d = prev.data
+      const isInsufficient = id === 'wallet'
+        && WALLET_BALANCE < MOCK_PRICING.totalPayable
+      return { ...prev, data: { ...d,
+        selectedPaymentMethod: id,
+        isWalletInsufficient: isInsufficient,
+        isPlaceOrderEnabled: !isInsufficient && d.termsAccepted,
+      }}
+    })
+  }, [])
+
+  const toggleTerms = useCallback(() => {
+    setState(prev => {
+      const d = prev.data
+      const t = !d.termsAccepted
+      return { ...prev, data: { ...d,
+        termsAccepted: t,
+        isPlaceOrderEnabled: !!d.selectedPaymentMethod
+          && !d.isWalletInsufficient && t,
+      }}
+    })
+  }, [])
+
+  const placeOrder = useCallback(() => {
+    setState(prev => ({ ...prev, data: {
+      ...prev.data, isProcessing: true
+    }}))
+    setTimeout(() => navigate('/subscription'), 2000)
+  }, [navigate])
+
+  return { state, selectPaymentMethod, toggleTerms, placeOrder }
+}`,
+  rkCode: `// useCheckout.ts — React + KMM (77 LOC)
+// Pricing from PricingCalculator.kt — no math here
+
+import { createCheckoutVM } from './kmmModule'
+
+export function useCheckout() {
+  const navigate = useNavigate()
+  const [state, setState] = useState({ status: 'loading' })
+  const vmRef = useRef(null)
+
+  useEffect(() => {
+    const vm = createCheckoutVM()
+    vmRef.current = vm
+
+    const cancelState = vm.observeState(s => setState(s))
+    const cancelEffect = vm.observeEffect(e => {
+      if (e.type === 'NavigateToMySubscription') {
+        localStorage.setItem('orderId', e.orderId)
+        navigate('/subscription')
+      }
+    })
+
+    // KMM calculates pricing from these inputs
+    vm.loadCheckout(
+      localStorage.getItem('selectedPlanSlug') || '',
+      localStorage.getItem('selectedPlanName') || '',
+      parseFloat(localStorage.getItem('checkoutBaseFare') || '65'),
+      parseInt(localStorage.getItem('checkoutTotalRides') || '44'),
+      parseFloat(localStorage.getItem('checkoutWalletBalance') || '500'),
+      localStorage.getItem('checkoutIsRoundTrip') !== 'false',
+    )
+
+    return () => { cancelState(); cancelEffect(); vm.destroy() }
+  }, [navigate])
+
+  const selectPaymentMethod = useCallback(id =>
+    vmRef.current?.selectPaymentMethod(id), [])
+  const toggleTerms = useCallback(() =>
+    vmRef.current?.toggleTerms(), [])
+  const placeOrder = useCallback(() =>
+    vmRef.current?.placeOrder(), [])
+
+  return { state, selectPaymentMethod, toggleTerms, placeOrder }
+}`,
+  kmCode: `// PricingCalculator.kt (64 LOC) + CheckoutViewModel.kt (209 LOC)
+// = 273 LOC shared
+
+object PricingCalculator {
+  const val CONVENIENCE_FEE = 25.0
+  const val GST_RATE = 0.05
+
+  fun calculatePricing(
+    baseFarePerRide: Double,
+    totalRides: Int,
+    walletBalance: Double,
+  ): PricingBreakdown {
+    val baseFareTotal = baseFarePerRide * totalRides
+    val subtotal = baseFareTotal + CONVENIENCE_FEE
+    val gstAmount = subtotal * GST_RATE
+    val total = subtotal + gstAmount
+    val walletCredit = minOf(walletBalance, total)
+    return PricingBreakdown(
+      baseFarePerRide, totalRides, baseFareTotal,
+      CONVENIENCE_FEE, GST_RATE * 100, gstAmount,
+      walletCredit, total - walletCredit
+    )
+  }
+
+  fun isWalletSufficient(balance: Double, payable: Double) =
+    balance >= payable
+}
+
+class CheckoutViewModel(...) : BaseViewModel<...>(...) {
+  private fun loadCheckout(...) {
+    val pricing = PricingCalculator.calculatePricing(
+      baseFare, totalRides, walletBalance
+    )
+    updateState { copy(pricing = pricing, /* ... */) }
+    analytics.track(CheckoutOpened(planSlug))
+  }
+  private fun selectPaymentMethod(id: String) {
+    val insufficient = id == "wallet"
+      && !PricingCalculator.isWalletSufficient(
+        currentState.walletBalance,
+        currentState.pricing.totalPayable)
+    updateState { copy(selectedPaymentMethod = id,
+      isWalletInsufficient = insufficient,
+      isPlaceOrderEnabled = !insufficient && termsAccepted) }
+  }
+  private fun placeOrder() { /* ... */ }
+}`
+},
+subscription: {
+  title: 'My Subscription', desc: 'Dashboard: status, usage, upcoming rides, renewal.',
+  ro: 150, rk: 55, km: 150,
+  roCode: `// useMySubscription.ts — React Only (~150 LOC)
+// Status transitions, ride generation, mock data
+
+function generateUpcomingRides(): UpcomingRide[] {
+  const rides = []
+  const today = new Date()
+  let count = 0, offset = 1
+
+  while (count < 5 && offset < 15) {
+    const d = new Date(today)
+    d.setDate(d.getDate() + offset)
+    if (d.getDay() !== 0 && d.getDay() !== 6) { // skip weekends
+      rides.push({
+        date: d.toISOString().split('T')[0],
+        dayLabel: d.toLocaleDateString('en-US',
+          { weekday: 'short', month: 'short', day: 'numeric' }),
+        pickupStop: 'Borivali Station',
+        pickupTime: '7:15 AM',
+        dropOffStop: 'BKC Platina',
+        shift: 'Morning',
+      })
+      count++
+    }
+    offset++
+  }
+  return rides
+}
+
+function buildSubscriptionData(status) {
+  return {
+    planName: 'Monthly Round-Trip',
+    status,
+    ridesUsed: 15, totalRides: 44,
+    usagePercentage: Math.round((15/44)*100),
+    upcomingRides: status === 'EXPIRED' ? [] : generateUpcomingRides(),
+    daysRemaining: status === 'EXPIRED' ? 0 : status === 'EXPIRING_SOON' ? 3 : 15,
+    renewalCta: status === 'ACTIVE' ? { type: 'HIDDEN' }
+      : { type: 'VISIBLE', message: 'Renew now' },
+  }
+}
+
+export function useMySubscription() {
+  const [state, setState] = useState({ status: 'loading' })
+
+  useEffect(() => {
+    setTimeout(() => {
+      setState({ status: 'success', data: buildSubscriptionData('ACTIVE') })
+    }, 700)
+    // Simulate transitions at 10s, 20s ...
+    setTimeout(() => setState(prev => ({
+      ...prev, data: buildSubscriptionData('EXPIRING_SOON')
+    })), 10000)
+  }, [])
+
+  const refresh = useCallback(() => {
+    setState({ status: 'loading' })
+    setTimeout(() => setState({
+      status: 'success', data: buildSubscriptionData('ACTIVE')
+    }), 700)
+  }, [])
+
+  return { state, refresh, renew: () => {}, goHome: () => {} }
+}`,
+  rkCode: `// useMySubscription.ts — React + KMM (55 LOC)
+// Just bridge — status logic, ride gen in KMM
+
+import { createMySubscriptionVM } from './kmmModule'
+
+export function useMySubscription() {
+  const [state, setState] = useState({ status: 'loading' })
+  const vmRef = useRef(null)
+
+  useEffect(() => {
+    const vm = createMySubscriptionVM()
+    vmRef.current = vm
+
+    const cancelState = vm.observeState(s => setState(s))
+    const cancelEffect = vm.observeEffect(e => {
+      if (e.type === 'NavigateToPlanSelection') {
+        // handle nav
+      }
+    })
+
+    vm.loadSubscription(
+      localStorage.getItem('orderId') || 'demo-001'
+    )
+
+    return () => { cancelState(); cancelEffect(); vm.destroy() }
+  }, [])
+
+  const refresh = useCallback(() =>
+    vmRef.current?.refreshStatus(), [])
+  const renew = useCallback(() =>
+    vmRef.current?.renewSubscription(), [])
+
+  return { state, refresh, renew }
+}`,
+  kmCode: `// MySubscriptionViewModel.kt — Shared (150 LOC)
+
+class MySubscriptionViewModel(
+  private val repo: ISubscriptionRepository,
+  private val analytics: SubscriptionAnalytics,
+) : BaseViewModel<State, Event, Effect>(...) {
+
+  private fun loadSubscription(orderId: String) {
+    launchSafe {
+      repo.getSubscriptionDetails(orderId).onSuccess { dto ->
+        val status = when {
+          dto.daysRemaining <= 0 -> EXPIRED
+          dto.daysRemaining <= 3 -> EXPIRING_SOON
+          else -> ACTIVE
+        }
+        val rides = generateUpcomingRides(dto)
+        val usage = ((dto.ridesUsed.toDouble() / dto.totalRides) * 100).toInt()
+        updateState { copy(
+          planName = dto.planName,
+          status = status,
+          ridesUsed = dto.ridesUsed,
+          usagePercentage = usage,
+          upcomingRides = rides,
+          renewalCta = buildRenewalCta(status),
+        )}
+        analytics.track(SubscriptionViewed(orderId))
+      }
+    }
+  }
+
+  private fun generateUpcomingRides(dto: SubscriptionDto): List<UpcomingRideUiModel> {
+    val rides = mutableListOf<UpcomingRideUiModel>()
+    var date = DateUtils.today().plus(1, DateTimeUnit.DAY)
+    while (rides.size < 5) {
+      if (!DateUtils.isWeekend(date)) {
+        rides.add(UpcomingRideUiModel(
+          date = DateUtils.formatDate(date),
+          dayLabel = DateUtils.formatDisplayDate(date),
+          pickupStop = dto.pickupStop,
+          dropOffStop = dto.dropOffStop,
+        ))
+      }
+      date = date.plus(1, DateTimeUnit.DAY)
+    }
+    return rides
+  }
+}`
+}
+};
+
+// ======= RENDER BAR CHART (Pure CSS) =======
+function renderBars() {
+  const max = Math.max(...hooks.map(h => Math.max(h.ro, h.km)));
+  document.getElementById('barChart').innerHTML = hooks.map(h => {
+    const savings = h.ro - h.rk;
+    const pct = Math.round((savings / h.ro) * 100);
+    const tag = savings > 0
+      ? `<span style="color:var(--green);font-size:11px">${savings > 0 ? '-' : '+'}${Math.abs(savings)} LOC (${pct}%)</span>`
+      : `<span style="color:var(--red);font-size:11px">+${Math.abs(savings)} LOC</span>`;
+    return `<div class="bar-group">
+      <div class="bar-label"><span class="mono" style="font-size:12px">${h.name}</span>${tag}</div>
+      <div style="display:grid;grid-template-columns:60px 1fr;gap:6px;align-items:center">
+        <span style="font-size:10px;color:var(--orange);text-align:right">React Only</span>
+        <div class="bar-track"><div class="bar-fill orange" style="width:${(h.ro/max*100).toFixed(0)}%">${h.ro}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:60px 1fr;gap:6px;align-items:center;margin-top:2px">
+        <span style="font-size:10px;color:var(--blue);text-align:right">React+KMM</span>
+        <div class="bar-track"><div class="bar-fill blue" style="width:${(h.rk/max*100).toFixed(0)}%">${h.rk}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:60px 1fr 80px;gap:6px;align-items:center;margin-top:2px">
+        <span style="font-size:10px;color:var(--violet);text-align:right">Shared KMM</span>
+        <div class="bar-track" style="height:10px"><div class="bar-fill violet" style="width:${(h.km/max*100).toFixed(0)}%"></div></div>
+        <span style="font-size:10px;color:var(--text2)">${h.km} LOC (3×)</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ======= RENDER SCORECARD =======
+function renderScores() {
+  document.getElementById('scorecard').innerHTML = scores.map(s => `
+    <div class="score-row">
+      <span class="score-label">${s.label}</span>
+      <div class="score-track"><div class="score-fill" style="width:${s.val*10}%;background:${s.color}"></div></div>
+      <span class="score-val" style="color:${s.color}">${s.val}/10</span>
+    </div>
+  `).join('');
+}
+
+// ======= RENDER FEATURES (tabs + collapsible code) =======
+let activeFeature = 'planSelection';
+
+function renderFeatureTabs() {
+  const keys = Object.keys(featureData);
+  document.getElementById('featureTabs').innerHTML = keys.map(k => {
+    const f = featureData[k];
+    return `<button class="tab ${k === activeFeature ? 'active' : ''}" onclick="switchFeature('${k}')">${f.title}</button>`;
+  }).join('');
+}
+
+function switchFeature(key) {
+  activeFeature = key;
+  renderFeatureTabs();
+  renderFeatureContent();
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderFeatureContent() {
+  const f = featureData[activeFeature];
+  const savings = f.ro - f.rk;
+  const pct = Math.round((savings / f.ro) * 100);
+
+  document.getElementById('featureContent').innerHTML = `<div class="fade">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">${f.desc}</p>
+
+    <div class="feat-stats">
+      <div class="feat-stat"><div class="num" style="color:var(--orange)">${f.ro}</div><div class="lbl">React Only Hook</div></div>
+      <div class="feat-stat"><div class="num" style="color:var(--blue)">${f.rk}</div><div class="lbl">React+KMM Hook</div></div>
+      <div class="feat-stat"><div class="num" style="color:var(--violet)">${f.km}</div><div class="lbl">Shared KMM Kotlin</div></div>
+      <div class="feat-stat"><div class="num" style="color:${savings > 0 ? 'var(--green)' : 'var(--red)'}">${savings > 0 ? '-' : '+'}${Math.abs(savings)}</div><div class="lbl">${savings > 0 ? pct + '% less' : Math.abs(pct) + '% more'} React</div></div>
+    </div>
+
+    ${codeSection('react-only', 'React Only — All Logic in Hook', 'var(--orange)', f.roCode)}
+    ${codeSection('react-kmm', 'React + KMM — Thin Bridge', 'var(--blue)', f.rkCode)}
+    ${codeSection('kmm-shared', 'Shared KMM Kotlin (Android + iOS + Web)', 'var(--violet)', f.kmCode)}
+  </div>`;
+}
+
+function codeSection(id, title, color, code) {
+  return `<div class="code-wrap" style="margin-bottom:10px;border-color:${color}22">
+    <div class="code-toggle" onclick="toggleCode('${id}-${activeFeature}',this)">
+      <span class="arrow">▶</span>
+      <span style="color:${color}">${title}</span>
+    </div>
+    <div class="code-body" id="${id}-${activeFeature}">
+      <div class="code-scroll"><pre><code>${esc(code)}</code></pre></div>
+    </div>
+  </div>`;
+}
+
+function toggleCode(id, btn) {
+  const body = document.getElementById(id);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+// ======= NAV ACTIVE STATE =======
+var sectionIds = ['summary','metrics','features','demo','effort','verdict'];
+window.addEventListener('scroll', function() {
+  var y = window.scrollY + 80;
+  for (var i = 0; i < sectionIds.length; i++) {
+    var el = document.getElementById(sectionIds[i]);
+    if (el && el.offsetTop <= y && el.offsetTop + el.offsetHeight > y) {
+      var allLinks = document.querySelectorAll('#navLinks a');
+      for (var j = 0; j < allLinks.length; j++) allLinks[j].classList.remove('active');
+      var link = document.querySelector('#navLinks a[href="#' + sectionIds[i] + '"]');
+      if (link) link.classList.add('active');
+    }
+  }
+});
+
+// ======= INIT =======
+renderBars();
+renderScores();
+renderFeatureTabs();
+renderFeatureContent();
+</script>
+<script src="comparison.js"></script>
+<script>initComparison();</script>
+</div><!-- /realContent -->
+</body>
+</html>
