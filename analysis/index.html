@@ -40,6 +40,7 @@
     .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr !important; } }
     .card { border-radius: 14px; padding: 20px; }
     .stat { font-size: 36px; font-weight: 900; line-height: 1; }
     .stat-sm { font-size: 24px; font-weight: 900; line-height: 1; }
@@ -271,8 +272,8 @@ function revealAnalysis(){
     <h2>Executive Summary</h2>
     <p class="subtitle">What a frontend engineer writes for each approach (KMM Kotlin code assumed already written).</p>
 
-    <div class="grid-3">
-      <div class="card glass" style="border-left:3px solid var(--orange)">
+    <div class="summary-grid" style="display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:16px;align-items:start">
+      <div class="card glass" style="border-left:3px solid var(--orange);opacity:0.7">
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:700;margin-bottom:8px">React Only</div>
         <div class="stat" style="color:var(--orange)">~3,400</div>
         <div class="label">Total lines of code</div>
@@ -284,25 +285,33 @@ function revealAnalysis(){
         </div>
       </div>
 
-      <div class="card glass" style="border-left:3px solid var(--blue)">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--blue);font-weight:700;margin-bottom:8px">React + KMM</div>
-        <div style="display:flex;align-items:baseline;gap:8px;justify-content:center;flex-wrap:wrap">
-          <div class="stat" style="color:var(--blue);text-decoration:line-through;opacity:0.4;font-size:28px">~2,900</div>
-          <div class="stat" style="color:var(--green)">~2,700</div>
+      <div class="card" style="border:2px solid var(--blue);background:rgba(59,130,246,0.06);box-shadow:0 0 40px rgba(59,130,246,0.15),0 0 80px rgba(59,130,246,0.05);padding:28px;position:relative;border-radius:16px">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--green));color:white;font-size:11px;font-weight:800;padding:4px 16px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Recommended Approach</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--blue);font-weight:700;margin-bottom:10px;margin-top:4px">React + KMM</div>
+        <div style="display:flex;align-items:baseline;gap:10px;justify-content:center;flex-wrap:wrap">
+          <div style="font-size:30px;font-weight:900;color:var(--blue);text-decoration:line-through;opacity:0.35">~2,900</div>
+          <div style="font-size:44px;font-weight:900;color:var(--green);line-height:1">~2,700</div>
         </div>
-        <div class="label">React code to write <span style="color:var(--green)">(with reusable helper)</span></div>
-        <div style="margin-top:12px">
+        <div class="label" style="font-size:13px;margin-top:2px">React code to write <span style="color:var(--green);font-weight:600">(with reusable helper)</span></div>
+        <div style="margin-top:14px">
           <div class="metric-row"><span>UI Components</span><span style="color:var(--white)">1,233</span></div>
           <div class="metric-row"><span>Screens</span><span style="color:var(--white)">1,092</span></div>
           <div class="metric-row"><span>Hooks (bridge)</span><span style="color:var(--blue);font-weight:600;text-decoration:line-through;opacity:0.5">~483</span><span style="color:var(--green);font-weight:700;margin-left:6px">~300</span></div>
           <div class="metric-row"><span>Types + Bridge</span><span style="color:var(--white)">201</span></div>
         </div>
-        <div style="margin-top:12px;padding:10px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;font-size:12px;color:var(--green);line-height:1.5;text-align:center">
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;font-size:12px;color:var(--green);line-height:1.5;text-align:center">
           A shared <strong>useKmmViewModel()</strong> helper eliminates repeated boilerplate from every hook
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:center;gap:16px;font-size:11px;font-weight:700">
+          <span style="color:var(--green)">20% less code</span>
+          <span style="color:var(--text2)">|</span>
+          <span style="color:var(--blue)">3 platforms shared</span>
+          <span style="color:var(--text2)">|</span>
+          <span style="color:var(--violet)">Zero logic in React</span>
         </div>
       </div>
 
-      <div class="card glass" style="border-left:3px solid var(--green)">
+      <div class="card glass" style="border-left:3px solid var(--green);opacity:0.85">
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--green);font-weight:700;margin-bottom:8px">3-Platform Win</div>
         <div class="stat" style="color:var(--green)">67%</div>
         <div class="label">Less business logic code across 3 platforms</div>
